@@ -151,3 +151,4 @@ echo "  2. Appearance → Themes → Aktifkan tema 'unbk'"
 echo "  3. Plugins → Aktifkan 'CBT Settings Fix'"
 echo "  4. Buat deploy.sh untuk update selanjutnya"
 echo ""
+

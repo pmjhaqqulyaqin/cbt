@@ -39,8 +39,8 @@ echo "  ✓ Plugin cbt-settings-fix diperbarui"
 rm -rf /tmp/cbt-update
 echo ""
 
-# Set permissions
-echo "[3/3] Set permissions..."
+# Set permissions & restart
+echo "[3/4] Set permissions..."
 chown -R www:www "$SITE_DIR/wp-content/themes/unbk"
 chown -R www:www "$SITE_DIR/wp-content/plugins/cbt-settings-fix"
 find "$SITE_DIR/wp-content/themes/unbk" -type d -exec chmod 755 {} \;
@@ -50,8 +50,15 @@ find "$SITE_DIR/wp-content/plugins/cbt-settings-fix" -type f -exec chmod 644 {} 
 echo "  ✓ Permissions diperbarui"
 echo ""
 
+# Restart PHP-FPM (clear opcache)
+echo "[4/4] Restart PHP-FPM..."
+/etc/init.d/php-fpm-74 restart 2>/dev/null || service php-fpm-74 restart
+echo "  ✓ PHP-FPM restarted (opcache cleared)"
+echo ""
+
 echo "============================================="
 echo "  ✅ UPDATE SELESAI!"
 echo "============================================="
 echo "  Site: https://cbt.mandualotim.sch.id/"
 echo ""
+

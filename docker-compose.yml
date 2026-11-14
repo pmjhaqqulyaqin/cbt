@@ -1,0 +1,75 @@
+services:
+  wordpress:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cbt-wordpress
+    ports:
+      - "8088:80"
+    environment:
+      WORDPRESS_DB_HOST: cbt-mysql
+      WORDPRESS_DB_USER: cbt_user
+      WORDPRESS_DB_PASSWORD: cbt_pass_2026
+      WORDPRESS_DB_NAME: cbt_unbk
+      WORDPRESS_TABLE_PREFIX: portalubk_
+    volumes:
+      - ./wp-content/themes:/var/www/html/wp-content/themes
+      - ./wp-content/plugins:/var/www/html/wp-content/plugins
+      - ./wp-content/uploads:/var/www/html/wp-content/uploads
+      - ./php-custom.ini:/usr/local/etc/php/conf.d/custom.ini
+    depends_on:
+      cbt-mysql:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - cbt-net
+
+  cbt-mysql:
+    image: mysql:8.0
+    container_name: cbt-mysql
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: cbt_root_2026
+      MYSQL_DATABASE: cbt_unbk
+      MYSQL_USER: cbt_user
+      MYSQL_PASSWORD: cbt_pass_2026
+    volumes:
+      - cbt_mysql_data:/var/lib/mysql
+      - ./database:/docker-entrypoint-initdb.d
+    command: >
+      --default-authentication-plugin=mysql_native_password
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_unicode_ci
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-pcbt_root_2026"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+    networks:
+      - cbt-net
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: cbt-phpmyadmin
+    ports:
+      - "8089:80"
+    environment:
+      PMA_HOST: cbt-mysql
+      PMA_USER: root
+      PMA_PASSWORD: cbt_root_2026
+    depends_on:
+      cbt-mysql:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - cbt-net
+
+networks:
+  cbt-net:
+    driver: bridge
+
+volumes:
+  cbt_mysql_data:
+

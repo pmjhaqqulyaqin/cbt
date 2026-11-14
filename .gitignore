@@ -1,0 +1,22 @@
+# WordPress core (handled by Docker image)
+# wp-admin/
+# wp-includes/
+
+# Uploads (Docker volume)
+wp-content/uploads/*
+!wp-content/uploads/.gitkeep
+
+# Environment
+.env
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+
+# Cache
+wp-content/cache/
+
